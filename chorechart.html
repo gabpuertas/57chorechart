@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Roommate Chore Chart</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #eef6f0;
+      margin: 0;
+      padding: 40px;
+      color: #2f4f3e;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      text-align: center;
+      font-weight: normal;
+      margin-bottom: 40px;
+      color: #4f7f67;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 across */
+      gap: 24px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .chore-card {
+      background-color: #f8fcf9;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      border: 2px solid #cfe6d8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .chore-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #356b52;
+    }
+
+    .description {
+      font-size: 14px;
+      margin-bottom: 16px;
+      color: #5f7f6d;
+    }
+
+    .name {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #7bbf9b;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #6b8f7a;
+    }
+
+    @media (max-width: 900px) {
+      .container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🧽 Roommate Chore Chart</h1>
+  <h2>Weekly Rotation (Resets Every Monday)</h2>
+
+  <div class="container" id="choreContainer"></div>
+
+  <footer>
+    Chores automatically rotate every Monday 💚
+  </footer>
+
+  <script>
+    const roommates = [
+      "Gabby",
+      "Bethany",
+      "Hailey",
+      "Emily",
+      "Mayci",
+      "Whitney"
+    ];
+
+    const chores = [
+      {
+        title: "Trashes",
+        description: "Take out trash from kitchen and bathrooms"
+      },
+      {
+        title: "Floors",
+        description: "Sweep & mop living room, kitchen, and hallway"
+      },
+      {
+        title: "Showers",
+        description: "Clean and wipe down all showers"
+      },
+      {
+        title: "Toilets",
+        description: "Clean toilets inside and out"
+      },
+      {
+        title: "Mirrors & Vanity",
+        description: "Clean sinks, mirrors, and countertops"
+      },
+      {
+        title: "General Reset",
+        description: "Tidy and reset shared spaces"
+      }
+    ];
+
+    // Get the Monday-based week number
+    function getMondayWeekNumber(date) {
+      const tempDate = new Date(date);
+      tempDate.setHours(0, 0, 0, 0);
+
+      // Adjust to Monday
+      const day = tempDate.getDay();
+      const diff = tempDate.getDate() - day + (day === 0 ? -6 : 1);
+      const monday = new Date(tempDate.setDate(diff));
+
+      const yearStart = new Date(monday.getFullYear(), 0, 1);
+      const weekNumber = Math.floor(
+        ((monday - yearStart) / 86400000 + yearStart.getDay() + 1) / 7
+      );
+
+      return weekNumber;
+    }
+
+    const weekNumber = getMondayWeekNumber(new Date());
+    const container = document.getElementById("choreContainer");
+
+    chores.forEach((chore, index) => {
+      const assignedPerson = roommates[(index + weekNumber) % roommates.length];
+
+      const card = document.createElement("div");
+      card.className = "chore-card";
+
+      card.innerHTML = `
+        <div>
+          <div class="chore-title">${chore.title}</div>
+          <div class="description">${chore.description}</div>
+        </div>
+        <div>
+          <div class="name">${assignedPerson}</div>
+          <div class="checkbox">
+            <input type="checkbox">
+          </div>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>
